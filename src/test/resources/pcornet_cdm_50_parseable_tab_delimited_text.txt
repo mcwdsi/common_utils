@@ -15,6 +15,20 @@ PROCEDURES	Procedure codes indicate the discrete medical interventions and diagn
 VITAL	Vital signs (such as height, weight, and blood pressure) directly measure an individual’s current state of attributes.	6
 DISPENSING	Prescriptions filled through a community, mail-order or hospital pharmacy. Outpatient dispensing may not be directly captured within healthcare systems.	7
 LAB_RESULT_CM	This table is used to store quantitative and qualitative measurements from blood and other body specimens.	8
+CONDITION	A condition represents a patient’s diagnosed and self-reported health conditions and diseases. The patient’s medical history and current state may both be represented.	9
+PRO_CM	This table is used to store responses to patient-reported outcome measures (PROs) or questionnaires. This table can be used to store item-level responses as well as the overall score for each measure.	10
+PRESCRIBING	Provider orders for medication dispensing and/or administration. These orders may take place in any setting, including the inpatient or outpatient basis.	11
+PCORNET_TRIAL	Patients who are enrolled in PCORnet clinical trials and PCORnet studies.	12
+DEATH	Reported mortality information for patients.	13
+DEATH_CAUSE	The individual causes associated with a reported death.	14
+MED_ADMIN	Records of medications administered to patients by healthcare providers. These administrations may take place in any setting, including inpatient, outpatient or home health encounters.	15
+PROVIDER	Data about the providers who are involved in the care processes documented in the CDM.	16
+OBS_CLIN	Standardized qualitative and quantitative clinical observations about a patient.	17
+OBS_GEN	Table to store everything else.	18
+HASH_TOKEN	Encrypted hash tokens that are used to match patient records across DataMarts using privacy-preserving record linkage methods.	19
+LDS_ADDRESS_HISTORY	Longitudinal record of a patient’s address that adheres to the requirements of a Limited Data Set.	20
+IMMUNIZATION	Records of immunizations that have been delivered within the health system as well as reports of those administered elsewhere.	21
+HARVEST	Attributes associated with the specific PCORnet datamart implementation, including data refreshes.	22
 
 @FIELD
 TABLE_NAME	FIELD_NAME	RDBMS_DATA_TYPE	SAS_DATA_TYPE	DATA_FORMAT	REPLICATED_FIELD	UNIT_OF_MEASURE	VALUESET	VALUESET_DESCRIPTOR	FIELD_DEFINITION	FIELD_ORDER	
@@ -82,10 +96,7 @@ DIAGNOSIS	DX_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			Date diagnosis was re
 DIAGNOSIS	DX_SOURCE	RDBMS Text(2)	SAS Char(2)		NO		AD;DI;FI;IN;NI;UN;OT	AD=Admitting; DI=Discharge; FI=Final; IN=Interim; NI=No information; UN=Unknown; OT=Other	Classification of diagnosis source. We include these categories to allow some flexibility in implementation. The context is to capture available diagnoses recorded during a specific encounter.	62	
 DIAGNOSIS	DX_ORIGIN	RDBMS Text(2)	SAS Char(2)		NO		OD;BI;CL;DR;NI;UN;OT	OD=Order; BI=Billing; CL=Claim; DR=Derived; NI=No information; UN=Unknown; OT=Other	Source of the diagnosis information. Billing pertains to internal healthcare processes and data sources. Claim pertains to data from the bill fulfillment, generally data sources held by insurers and other health plans. New field added in v3.1.	63	
 DIAGNOSIS	PDX	RDBMS Text(2)	SAS Char(2)		NO		P;S;NI;UN;OT	P=Principal; S=Secondary; NI=No information; UN=Unknown; OT=Other	Principal discharge diagnosis flag.	64	
-DIAGNOSIS	DX_POA	RDBMS Text(2)	SAS Char(2)		NO		Y;N;U;W;1:NI;UN;OT	"Y=Diagnosis present; N=Diagnosis not present; 
-U=Insufficient documentation; W=Clinically undetermined; 1=Unreported / not used; NI=No information; UN=Unknown; OT=Other
-"	"Flag to denote whether diagnosis was present on inpatient admission.  Y=Diagnosis present at time of inpatient admission.  N=Diagnosis not present at time of inpatient admission.  U=Documentation insufficient to determine if the condition was present at the time of inpatient admission.  W=Clinically undetermined.  Provider unable to clinically determine whether the condition was present at the time of inpatient admission.  1=Unreported / not used.  Exempt from present-on-admission reporting.
-"	65	
+DIAGNOSIS	DX_POA	RDBMS Text(2)	SAS Char(2)		NO		Y;N;U;W;1:NI;UN;OT	"Y=Diagnosis present; N=Diagnosis not present; U=Insufficient documentation; W=Clinically undetermined; 1=Unreported / not used; NI=No information; UN=Unknown; OT=Other"	"Flag to denote whether diagnosis was present on inpatient admission.  Y=Diagnosis present at time of inpatient admission.  N=Diagnosis not present at time of inpatient admission.  U=Documentation insufficient to determine if the condition was present at the time of inpatient admission.  W=Clinically undetermined.  Provider unable to clinically determine whether the condition was present at the time of inpatient admission.  1=Unreported / not used.  Exempt from present-on-admission reporting."	65	
 DIAGNOSIS	RAW_DX	RDBMS Text(x)	SAS Char(x)		NO				Optional field for originating value of field, prior to mapping into the PCORnet CDM value set.	66	
 DIAGNOSIS	RAW_DX_TYPE	RDBMS Text(x)	SAS Char(x)		NO				Optional field for originating value of field, prior to mapping into the PCORnet CDM value set.	67	
 DIAGNOSIS	RAW_DX_SOURCE	RDBMS Text(x)	SAS Char(x)		NO				Optional field for originating value of field, prior to mapping into the PCORnet CDM value set.	68	
@@ -147,15 +158,7 @@ LAB_RESULT_CM	ENCOUNTERID	RDBMS Text(x)	SAS Char(x)		NO				Arbitrary encounter-l
 LAB_RESULT_CM	SPECIMEN_SOURCE	RDBMS Text(x)	SAS Char(x)		NO		See SPECIMEN_SOURCE tab in most recent PCORnet CDM Value Set Reference File		Do not derive a specimen source based on the LOINC code. Please map the specimen source present in the source system to the appropriate code in the Value Set Appendix.	124	
 LAB_RESULT_CM	LAB_LOINC	RDBMS Text(10)	SAS Char(10)		NO				Logical Observation Identifiers, Names, and Codes (LOINC®) from the Regenstrief Institute. Results with local versions of LOINC codes (e.g., LOINC candidate codes) should be included in the RAW_ table field, but the LOINC variable should be set to missing. Current LOINC codes are from 3-7 characters long but Regenstrief suggests a length of 10 for future growth. The last digit of the LOINC code is a check digit and is always preceded by a hyphen. All parts of the LOINC code, including the hyphen, must be included. Do not pad the LOINC code with leading zeros.	125	
 LAB_RESULT_CM	LAB_RESULT_SOURCE	RDBMS Text (2)	SAS Char(2)		NO		OD;BI;CL;DR;NI;UN;OT	OD=Order/EHR; BI=Billing; CL=Claim; DR=Derived; NI=No information; UN=Unknown; OT=Other;	Source of the information for the lab result	126	
-LAB_RESULT_CM	LAB_LOINC_SOURCE	RDBMS Text(2)	SAS Char(2)		NO		IN;LM;HL;DW;PC;DM;NI;UN;OT	IN=Instrument; LM=LIMS (Standalone or EHR); HL=HL7 feed; DW=Data warehouse; PC=PCORnet ETL; DM=Other CDM; NI=No information; UN=Unknown; OT=Other 	"Source/provenance of the LOINC code for this result.
-Details of categorical definitions:
-Instrument: Assigned by the instrument used to process the sample and generate the result.
-Laboratory Information Management System (LIMS): Code is assigned by the system used to manage laboratory results, either stand-alone or as part of the EHR.
-HL7 Feed: Code is assigned from an external HL7 feed (e.g., by a Health Information Exchange).
-Data warehouse: LOINC codes are generated during the extract-transform-load (ETL) procedures used to populate a standalone data warehouse or reporting database.
-PCORnet ETL: LOINC codes are assigned as part of the ETL process used to populate the PCORnet CDM.
-Other CDM: Codes are assigned through the ETL used to populate a CDM that is upstream from the PCORnet ETL.  
-"	127	
+LAB_RESULT_CM	LAB_LOINC_SOURCE	RDBMS Text(2)	SAS Char(2)		NO		IN;LM;HL;DW;PC;DM;NI;UN;OT	IN=Instrument; LM=LIMS (Standalone or EHR); HL=HL7 feed; DW=Data warehouse; PC=PCORnet ETL; DM=Other CDM; NI=No information; UN=Unknown; OT=Other 	"Source/provenance of the LOINC code for this result. Details of categorical definitions: Instrument: Assigned by the instrument used to process the sample and generate the result. Laboratory Information Management System (LIMS): Code is assigned by the system used to manage laboratory results, either stand-alone or as part of the EHR. HL7 Feed: Code is assigned from an external HL7 feed (e.g., by a Health Information Exchange). Data warehouse: LOINC codes are generated during the extract-transform-load (ETL) procedures used to populate a standalone data warehouse or reporting database. PCORnet ETL: LOINC codes are assigned as part of the ETL process used to populate the PCORnet CDM. Other CDM: Codes are assigned through the ETL used to populate a CDM that is upstream from the PCORnet ETL."	127	
 LAB_RESULT_CM	PRIORITY	RDBMS Text(2)	SAS Char(2)		NO		E;R;S;NI;UN;OT	E=Expedite; R=Routine; S=Stat; NI=No information; UN=Unknown; OT=Other	Immediacy of test. The intent of this variable is to determine whether the test was obtained as part of routine care or as an emergent/urgent diagnostic test (designated as Stat or Expedite).	128	
 LAB_RESULT_CM	RESULT_LOC	RDBMS Text(2)	SAS Char(2)		NO		L;P;NI;UN;OT	L=Lab; P=Point of Care; NI=No information; UN=Unknown; OT=Other	Location of the test result. Point of Care locations may include anticoagulation clinic, newborn nursery, finger stick in provider office, or home. The default value is ‘L’ unless the result is Point of Care. There should not be any missing values.	129	
 LAB_RESULT_CM	LAB_PX	RDBMS Text(11)	SAS Char(11)		NO				Optional variable for local and standard procedure codes, used to identify the originating order for the lab test.	130	
@@ -201,20 +204,9 @@ PRO_CM	PATID	RDBMS Text(x)	SAS Char(x)		NO				Arbitrary person-level identifier 
 PRO_CM	ENCOUNTERID	RDBMS Text(x)	SAS Char(x)		NO				Arbitrary encounter-level identifier used to link across tables. This is an optional field, and should only be populated if the item was collected as part of a healthcare encounter.	170	
 PRO_CM	PRO_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			The date of the response.	171	
 PRO_CM	PRO_TIME	RDBMS Text(5)	SAS Time (Numeric)	HH:MI using 24-hour clock and zero-padding for hour and minute	NO	TIME			The time of the response.	172	
-PRO_CM	PRO_TYPE	RDBMS Text(2)	SAS Char(2)		NO		PM;NQ;AM;NT;PC;LC;HC;NI;UN;OT	"PM=PROMIS; NQ=Neuro-QoL; AM=ASQC-Me; NT=NIH Toolbox; PC=PRO_CTCAE; LC=LOINC; HC=HCAHPS; NI=No information; UN=Unknown; OT=Other
-"	"Terminology / vocabulary used to describe the PRO item.
-
-More information on PROMIS, Neuro-QoL and ASQC-Me and the NIH Toolbox can be found on the HealthMeasures website. (www.healthmeasures.net)
-
-The Patient-Reported Outcome version of the Common Terminology Criteria for Adverse Events (PRO-CTCAE™) is maintained by the National Cancer Institute. (https://healthcaredelivery.cancer.gov/pro-ctcae/)
-
-Information on the Hospital Consumer Assessment of Healthcare Providers and Systems (HPCAHPS) is located here:
-http://www.hcahpsonline.org"	173	
+PRO_CM	PRO_TYPE	RDBMS Text(2)	SAS Char(2)		NO		PM;NQ;AM;NT;PC;LC;HC;NI;UN;OT	"PM=PROMIS; NQ=Neuro-QoL; AM=ASQC-Me; NT=NIH Toolbox; PC=PRO_CTCAE; LC=LOINC; HC=HCAHPS; NI=No information; UN=Unknown; OT=Other"	"Terminology / vocabulary used to describe the PRO item. More information on PROMIS, Neuro-QoL and ASQC-Me and the NIH Toolbox can be found on the HealthMeasures website. (www.healthmeasures.net) The Patient-Reported Outcome version of the Common Terminology Criteria for Adverse Events (PRO-CTCAE™) is maintained by the National Cancer Institute. (https://healthcaredelivery.cancer.gov/pro-ctcae/) Information on the Hospital Consumer Assessment of Healthcare Providers and Systems (HPCAHPS) is located here: http://www.hcahpsonline.org"	173	
 PRO_CM	PRO_ITEM_NAME	RDBMS Text(x)	SAS Char(x)		NO				Short name or code of the PRO item in the vocabulary/terminology specified in PRO_TYPE.	174	
-PRO_CM	PRO_ITEM_LOINC	RDBMS Text(10)	SAS Char(10)		NO				"LOINC® code for the PRO item, if available. 
-
-Logical Observation Identifiers, Names, and Codes (LOINC) from the Regenstrief Institute.  Current LOINC codes are from 3-7 characters long but Regenstrief suggests a length of 10 for future growth. The last digit of the LOINC code is a check digit and is always preceded by a hyphen. All parts of the LOINC code, including the hyphen, must be included. Do not pad the LOINC code with leading zeros.
-"	175	
+PRO_CM	PRO_ITEM_LOINC	RDBMS Text(10)	SAS Char(10)		NO				"LOINC® code for the PRO item, if available. Logical Observation Identifiers, Names, and Codes (LOINC) from the Regenstrief Institute.  Current LOINC codes are from 3-7 characters long but Regenstrief suggests a length of 10 for future growth. The last digit of the LOINC code is a check digit and is always preceded by a hyphen. All parts of the LOINC code, including the hyphen, must be included. Do not pad the LOINC code with leading zeros."	175	
 PRO_CM	PRO_RESPONSE_TEXT	RDBMS Text(x)	SAS Char(x)		NO				Text version of the response recorded for the item, if available/applicable.	176	
 PRO_CM	PRO_RESPONSE_NUM	RDBMS Number(x)	SAS Numeric(length 8)	RDBMS number supports 15 total digits, 8 after decimal; SAS numeric length 8	NO					177	
 PRO_CM	PRO_METHOD	RDBMS Text(2)	SAS Char(2)		NO		PA;EC;PH;IV;NI;UN;OT	PA=Paper; EC=Electronic; PH=Telephonic; IV=Telephonic with interactive voice response (IVR) technology; NI=No information; UN=Unknown; OT=Other	Method of administration. Electronic includes responses captured via a personal or tablet computer, at web kiosks, or via a smartphone.	178	
@@ -229,10 +221,7 @@ PRO_CM	PRO_MEASURE_THETA	RDBMS Number(x)	SAS Numeric(length 8)		NO				The value 
 PRO_CM	PRO_MEASURE_SCALED_TSCORE	RDBMS Number(x)	SAS Numeric(length 8)		NO				Standardized score based on the total raw score for the instrument.  Only applies to items that are administered as part of a measure.	187	
 PRO_CM	PRO_MEASURE_STANDARD_ERROR	RDBMS Number(x)	SAS Numeric(length 8)		NO				Possible range of the actual final score based on the scaled T-score.  Only applies to items that are administered as part of a measure.	188	
 PRO_CM	PRO_MEASURE_COUNT_SCORED	RDBMS Number(x)	SAS Numeric(length 8)		NO				Number of PRO item responses that were involved in the scoring of the measure.	189	
-PRO_CM	PRO_MEASURE_LOINC	RDBMS Text(10)	SAS Char(10)		NO				"LOINC® code for the PRO item, if available. 
-
-Logical Observation Identifiers, Names, and Codes (LOINC) from the Regenstrief Institute.  Current LOINC codes are from 3-7 characters long but Regenstrief suggests a length of 10 for future growth. The last digit of the LOINC code is a check digit and is always preceded by a hyphen. All parts of the LOINC code, including the hyphen, must be included. Do not pad the LOINC code with leading zeros.
-"	190	
+PRO_CM	PRO_MEASURE_LOINC	RDBMS Text(10)	SAS Char(10)		NO				"LOINC® code for the PRO item, if available. Logical Observation Identifiers, Names, and Codes (LOINC) from the Regenstrief Institute.  Current LOINC codes are from 3-7 characters long but Regenstrief suggests a length of 10 for future growth. The last digit of the LOINC code is a check digit and is always preceded by a hyphen. All parts of the LOINC code, including the hyphen, must be included. Do not pad the LOINC code with leading zeros."	190	
 PRO_CM	PRO_MEASURE_VERSION	RDBMS Text(x)	SAS Char(x)	.	NO				Version of the measure.	191	
 PRO_CM	PRO_ITEM_FULLNAME	RDBMS Text(x)	SAS Char(x)	.	NO				Full name of the PRO item.	192	
 PRO_CM	PRO_ITEM_TEXT	RDBMS Text(x)	SAS Char(x)	.	NO				Text of the PRO item question.	193	
@@ -257,8 +246,7 @@ PRESCRIBING	RX_ROUTE	RDBMS Text(x)	SAS Char(x)		NO		See _ROUTE tab in most recen
 PRESCRIBING	RX_BASIS	RDBMS Text(2)	SAS Char(2)		NO		01;02;NI;UN;OT	01=Order to Dispense; 02=Order to administer; NI=No information; UN=Unknown; OT=Other	Basis of the medication order. The PRESCRIBING table can contain orders for many different activities, and this field is intended to connect the provider’s prescribing order with how the order was fulfilled (such as outpatient dispensing or administration by a healthcare professional). (Value set items updated and field definition expanded in v3.1.)	212	
 PRESCRIBING	RXNORM_CUI	RDBMS Text (8)	SAS Char(8)		NO				Where an RxNorm mapping exists for the source medication, this field contains the RxNorm concept identifier (CUI) at the highest possible specificity. v3.1 modification: field types changed to character because the National Library of Medicine specifies this variable as a character type.	213	
 PRESCRIBING	RX_SOURCE	RDBMS Text(2)	SAS Char(2)		NO		OD;DR;NI;UN;OT	OD=Order/EHR; DR=Derived; NI=No information; UN=Unknown; OT=Other	Source of the prescribing information.	214	
-PRESCRIBING	RX_DISPENSE_AS_WRITTEN	RDBMS Text(2)	SAS Char(2)		NO		Y;N;NI;UN;OT	"Y=Yes; N=No; NI=No information; UN=Unknown; OT=Other
-"	Flag to indicate whether the provider indicated that the medication order was to be dispensed as written.	215	
+PRESCRIBING	RX_DISPENSE_AS_WRITTEN	RDBMS Text(2)	SAS Char(2)		NO		Y;N;NI;UN;OT	"Y=Yes; N=No; NI=No information; UN=Unknown; OT=Other"	Flag to indicate whether the provider indicated that the medication order was to be dispensed as written.	215	
 PRESCRIBING	RAW_RX_MED_NAME	RDBMS Text(x)	SAS Char(x)		NO				Optional field for originating, full textual medication name from the source.	216	
 PRESCRIBING	RAW_RX_FREQUENCY	RDBMS Text(x)	SAS Char(x)		NO				Optional field for originating value of field, prior to mapping into the PCORnet CDM value set.	217	
 PRESCRIBING	RAW_RXNORM_CUI	RDBMS Text(x)	SAS Char(x)		NO				Optional field for originating value of field, prior to mapping into the PCORnet CDM value set.	218	
@@ -296,8 +284,7 @@ MED_ADMIN	MEDADMIN_START_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			Date medi
 MED_ADMIN	MEDADMIN_START_TIME	RDBMS Text(5)	SAS Time (Numeric)	HH:MI using 24-hour clock and zero-padding for hour and minute	NO	TIME			Time medication administration started/occurred	250	
 MED_ADMIN	MEDADMIN_STOP_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			Date medication administration ended	251	
 MED_ADMIN	MEDADMIN_STOP_TIME	RDBMS Text(5)	SAS Time (Numeric)	HH:MI using 24-hour clock and zero-padding for hour and minute	NO	TIME			Time medication administration ended	252	
-MED_ADMIN	MEDADMIN_TYPE	RDBMS Text(2)	SAS Char(2)		NO		ND;RX;NI;UN;OT	"ND=NDC; RX=RXNORM; NI=No information; UN=Unknown; OT=Other
-"	Medication code type	253	
+MED_ADMIN	MEDADMIN_TYPE	RDBMS Text(2)	SAS Char(2)		NO		ND;RX;NI;UN;OT	"ND=NDC; RX=RXNORM; NI=No information; UN=Unknown; OT=Other"	Medication code type	253	
 MED_ADMIN	MEDADMIN_CODE	RDBMS Text(x)	SAS Char(x)		NO				Medication code	254	
 MED_ADMIN	MEDADMIN_DOSE_ADMIN	RDBMS Number(x)	SAS Numeric(length 8)		NO				Dose of a given mediation, as administered by the provider	255	
 MED_ADMIN	MEDADMIN_DOSE_ADMIN_UNIT	RDBMS Text(x)	SAS Char(x)		NO		See _UNIT tab in most recent PCORnet CDM Value Set Reference File		Units of measure associated with the dose of the medication as administered by the provider	256	
@@ -309,8 +296,7 @@ MED_ADMIN	RAW_MEDADMIN_DOSE_ADMIN	RDBMS Text(x)	SAS Char(x)		NO				Field for ori
 MED_ADMIN	RAW_MEDADMIN_DOSE_ADMIN_UNIT	RDBMS Text(x)	SAS Char(x)		NO				Field for originating value, prior to mapping into the PCORnet CDM value set.	262	
 MED_ADMIN	RAW_MEDADMIN_ROUTE	RDBMS Text(x)	SAS Char(x)		NO				Field for originating value, prior to mapping into the PCORnet CDM value set.	263	
 PROVIDER	PROVIDERID	RDBMS Text(x)	SAS Char(x)		NO				Arbitrary identifier for each unique PROVIDER record. Does not need to be persistent across refreshes, and may be created by methods such as sequence or GUID.	264	
-PROVIDER	PROVIDER_SEX	RDBMS Text(2)	SAS Char(2)		NO		A;F;M;NI;UN;OT	"A=Ambiguous; F=Female; M=Male; NI=No information; UN=Unknown; OT=Other
-"	Sex assigned at birth.	265	
+PROVIDER	PROVIDER_SEX	RDBMS Text(2)	SAS Char(2)		NO		A;F;M;NI;UN;OT	"A=Ambiguous; F=Female; M=Male; NI=No information; UN=Unknown; OT=Other"	Sex assigned at birth.	265	
 PROVIDER	PROVIDER_SPECIALTY_PRIMARY	RDBMS Text(x)	SAS Char(x)		NO		See PROVIDER_PRIMARY_SPECIALTY tab in most recent PCORnet CDM Value Set Reference File		Primary specialty of the provider	266	
 PROVIDER	PROVIDER_NPI	RDBMS Number(x)	SAS Numeric(length 8)		NO				National Provider Identifier (NPI) of the provider.	267	
 PROVIDER	PROVIDER_NPI_FLAG	RDBMS Text(1)	SAS Char(1)		NO		Y;N	Y=Yes; N=No	Flag to indicate whether partner has access to the National Provider Identifier (NPI) of the provider.	268	
@@ -321,16 +307,13 @@ OBS_CLIN	ENCOUNTERID	RDBMS Text(x)	SAS Char(x)		NO				Arbitrary encounter-level 
 OBS_CLIN	OBSCLIN_PROVIDERID	RDBMS Text(x)	SAS Char(x)		NO				Provider code for the provider who ordered the observation. The provider code is a pseudoidentifier with a consistent crosswalk to the real identifier.	273	
 OBS_CLIN	OBSCLIN_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			Date of observation/measurement	274	
 OBS_CLIN	OBSCLIN_TIME	RDBMS Text(5) 	SAS Time (Numeric)	Format as HH:MI using 24-hour clock and zero-padding for hour and minute	NO				Time of observation/measurement.	275	
-OBS_CLIN	OBSCLIN_TYPE	RDBMS Text(2)	SAS Char(2)		NO		LC;SM;NI;UN;OT	"LC=LOINC; SM=SNOMED CT (observable entity); NI=No information; UN=Unknown; OT=Other
-"	Terminology / vocabulary used to describe the clinical observation.	276	
+OBS_CLIN	OBSCLIN_TYPE	RDBMS Text(2)	SAS Char(2)		NO		LC;SM;NI;UN;OT	"LC=LOINC; SM=SNOMED CT (observable entity); NI=No information; UN=Unknown; OT=Other"	Terminology / vocabulary used to describe the clinical observation.	276		
 OBS_CLIN	OBSCLIN_CODE	RDBMS Text(x)	SAS Char(x)		NO				Code of the clinical observation in the vocabulary/terminology specified in OBSCLIN_TYPE.	277	
 OBS_CLIN	OBSCLIN_RESULT_QUAL	RDBMS Text(x)	SAS Char(x)		NO		See _QUAL tab in most recent PCORnet CDM Value Set Reference File		Standardized result for qualitative results. This variable should be NI for quantitative results.	278	
 OBS_CLIN	OBSCLIN_RESULT_TEXT	RDBMS Text(x)	SAS Char(x)		NO				Narrative/textual clinical observations	279	
 OBS_CLIN	OBSCLIN_RESULT_SNOMED	RDBMS Text(x)	SAS Char(x)		NO				If the qualitative result has been mapped to SNOMED CT, the corresponding SNOMED code can be placed here.	280	
 OBS_CLIN	OBSCLIN_RESULT_NUM	RDBMS Number(x)	SAS Numeric(length 8)		NO				Standardized/converted result for quantitative results.	281	
-OBS_CLIN	OBSCLIN_RESULT_MODIFIER	RDBMS Text(2)	SAS Char(2)		NO		EQ;GE;GT;LE;LT;TX;NI;UN;OT	"EQ=Equal; GE=Greater than or equal to; GT=Greater than; LE=Less than or equal to
-LT=Less than; TX=Text; NI=No information
-UN=Unknown; OT=Other"	Modifier for result values.	282	
+OBS_CLIN	OBSCLIN_RESULT_MODIFIER	RDBMS Text(2)	SAS Char(2)		NO		EQ;GE;GT;LE;LT;TX;NI;UN;OT	"EQ=Equal; GE=Greater than or equal to; GT=Greater than; LE=Less than or equal to LT=Less than; TX=Text; NI=No information UN=Unknown; OT=Other"	Modifier for result values.	282		
 OBS_CLIN	OBSCLIN_RESULT_UNIT	RDBMS Text(x)	SAS Char(x)		NO		See _UNIT tab in most recent PCORnet CDM Value Set Reference File		Converted/standardized units for the result.	283	
 OBS_CLIN	OBSCLIN_SOURCE	RDBMS Text(2)	SAS Char(2)		NO		OD;BI;CL;RG;DR;NI;UN;OT	OD=Order/EHR; BI=Billing; CL=Claim; RG=Registry/ancillary system; DR=Derived; NI=No information; UN=Unknown; OT=Other	Source of the information for the lab result.	284	
 OBS_CLIN	RAW_OBSCLIN_NAME	RDBMS Text(x)	SAS Char(x)		NO				Local name related to an individual clinical observation/measurement.	285	
@@ -345,27 +328,14 @@ OBS_GEN	ENCOUNTERID	RDBMS Text(x)	SAS Char(x)		NO				Arbitrary encounter-level i
 OBS_GEN	OBSGEN_PROVIDERID	RDBMS Text(x)	SAS Char(x)		NO				Provider code for the provider who recorded the observation. The provider code is a pseudoidentifier with a consistent crosswalk to the real identifier.	294	
 OBS_GEN	OBSGEN_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			Date of observation/measurement	295	
 OBS_GEN	OBSGEN_TIME	RDBMS Text(5) 	SAS Time (Numeric)	Format as HH:MI using 24-hour clock and zero-padding for hour and minute	NO				Time of observation/measurement.	296	
-OBS_GEN	OBSGEN_TYPE	RDBMS Text(30)	SAS Char(30)		NO		09DX;09PX;10DX; 10PX;11DX; 11PX;ON;SM;HP;HG;LC;RX;ND;CH;GM;UD_*;PC_*;NI;UN;OT	"09DX=ICD-9-CM; 09PX=ICD-9-PCS; 10DX=ICD-10-CM; 10PX=ICD-10-PCS; 11DX=ICD-11-CM; 11PX=ICD-11-PCS; ON=ICD-O (Oncology)
-SM=SNOMED; HP=Human Phenotype Ontology; HG=Human Genome Organization
-LC=LOINC; RX=RXNORM; ND=NDC
-CH=CPT/HCPCS; GM=Global Medical Device Nomenclature; UD_*=User-defined; PC_*=PCORnet reserved; NI=No information; UN=Unknown; OT=Other"	"Terminology/vocabulary used to describe the observation.
-Networks/partners can define their own terminologies with strings starting with “UD_”. 
-Strings that start with “PC_” are reserved for network-wide activities and will be assigned by the Coordinating Center."	297	
+OBS_GEN	OBSGEN_TYPE	RDBMS Text(30)	SAS Char(30)		NO		09DX;09PX;10DX; 10PX;11DX; 11PX;ON;SM;HP;HG;LC;RX;ND;CH;GM;UD_*;PC_*;NI;UN;OT	"09DX=ICD-9-CM; 09PX=ICD-9-PCS; 10DX=ICD-10-CM; 10PX=ICD-10-PCS; 11DX=ICD-11-CM; 11PX=ICD-11-PCS; ON=ICD-O (Oncology) SM=SNOMED; HP=Human Phenotype Ontology; HG=Human Genome Organization LC=LOINC; RX=RXNORM; ND=NDC CH=CPT/HCPCS; GM=Global Medical Device Nomenclature; UD_*=User-defined; PC_*=PCORnet reserved; NI=No information; UN=Unknown; OT=Other"	"Terminology/vocabulary used to describe the observation. Networks/partners can define their own terminologies with strings starting with “UD_”. Strings that start with “PC_” are reserved for network-wide activities and will be assigned by the Coordinating Center."	297		
 OBS_GEN	OBSGEN_CODE	RDBMS Text(x)	SAS Char(x)		NO				Standardized code denoting the observations based on the terminology/vocabulary specified in OBSGEN_TYPE	298	
 OBS_GEN	OBSGEN_RESULT_QUAL	RDBMS Text(x)	SAS Char(x)		NO		See _QUAL tab in most recent PCORnet CDM Value Set Reference File		Standardized result for qualitative results. This variable should be NI for quantitative results.	299	
 OBS_GEN	OBSGEN_RESULT_TEXT	RDBMS Text(x)	SAS Char(x)		NO				Narrative/textual observations.	300	
 OBS_GEN	OBSGEN_RESULT_NUM	RDBMS Number(x)	SAS Numeric(length 8)		NO				Standardized/converted result for quantitative results.	301	
-OBS_GEN	OBSGEN_RESULT_MODIFIER	RDBMS Text(2)	SAS Char(2)		NO		EQ;GE;GT;LE;LT;TX;NI;UN;OT	"EQ=Equal; GE=Greater than or equal to; GT=Greater than; LE=Less than or equal to
-LT=Less than; TX=Text; NI=No information
-UN=Unknown; OT=Other"	Modifier for result values.	302	
+OBS_GEN	OBSGEN_RESULT_MODIFIER	RDBMS Text(2)	SAS Char(2)		NO		EQ;GE;GT;LE;LT;TX;NI;UN;OT	"EQ=Equal; GE=Greater than or equal to; GT=Greater than; LE=Less than or equal to LT=Less than; TX=Text; NI=No information UN=Unknown; OT=Other"	Modifier for result values.	302		
 OBS_GEN	OBSGEN_RESULT_UNIT	RDBMS Text(x)	SAS Char(x)		NO		See _UNIT tab in most recent PCORnet CDM Value Set Reference File		Converted/standardized units for the result.	303	
-OBS_GEN	OBSGEN_TABLE_MODIFIED	RDBMS Text(3)	SAS Char(3)		NO		ENR;ENC;DX;PX;VT;DSP;LAB;CON;PRO;RX;PT;DTH;DC;MA;OC;OB;OT	"ENR=ENROLLMENT; ENC=ENCOUNTER
-DX=DIAGNOSIS; PX=PROCEDURES; VT=VITAL; DSP=DISPENSING
-LAB=LAB_RESULT_CM; CON=CONDITION; PRO=PRO_CM
-RX=PRESCRIBING; PT=PCORNET_TRIAL
-DTH=DEATH; DC=DEATH_CAUSE
-MA=MED_ADMIN; OC=OBS_CLIN
-OB=OBS_GEN; OT=Other"	Table name when observation describes attributes of an existing record in the CDM.	304	
+OBS_GEN	OBSGEN_TABLE_MODIFIED	RDBMS Text(3)	SAS Char(3)		NO		ENR;ENC;DX;PX;VT;DSP;LAB;CON;PRO;RX;PT;DTH;DC;MA;OC;OB;OT	"ENR=ENROLLMENT; ENC=ENCOUNTER DX=DIAGNOSIS; PX=PROCEDURES; VT=VITAL; DSP=DISPENSING LAB=LAB_RESULT_CM; CON=CONDITION; PRO=PRO_CM RX=PRESCRIBING; PT=PCORNET_TRIAL DTH=DEATH; DC=DEATH_CAUSE MA=MED_ADMIN; OC=OBS_CLIN OB=OBS_GEN; OT=Other"	Table name when observation describes attributes of an existing record in the CDM.	304		
 OBS_GEN	OBSGEN_ID_MODIFIED	RDBMS Text(x)	SAS Char(x)		NO				Identifier when observation describes attributes of an existing record in the CDM.	305	
 OBS_GEN	OBSGEN_SOURCE	RDBMS Text(2)	SAS Char(2)		NO		OD;BI;CL;RG;SR;DR;NI;UN;OT	OD=Order/EHR; BI=Billing; CL=Claim; RG=Registry/ancillary system; SR=Survey system/mobile app; DR=Derived; NI=No information; UN=Unknown; OT=Other	Source of the information for the lab result.	306	
 OBS_GEN	RAW_OBSGEN_NAME	RDBMS Text(x)	SAS Char(x)		NO				Local name related to an individual clinical observation/measurement.	307	
@@ -384,18 +354,8 @@ HASH_TOKEN	TOKEN_22	RDBMS Text(x)	SAS Char(x)		NO				Encrypted hash generated fr
 HASH_TOKEN	TOKEN_23	RDBMS Text(x)	SAS Char(x)		NO				Encrypted hash generated from PII using token strategy 23.	320	
 LDS_ADDRESS_HISTORY	ADDRESSID	RDBMS Text(x)	SAS Char(x)		NO				Arbitrary identifier for each unique address record. 	321	
 LDS_ADDRESS_HISTORY	PATID	RDBMS Text(x)	SAS Char(x)		NO				Arbitrary person-level identifier. Used to link across tables.	322	
-LDS_ADDRESS_HISTORY	ADDRESS_USE	RDBMS Text(2)	SAS Char(2)		NO		"HO;WO;TP;OL;NI;UN;OT
-"	HO=Home; WO=Work; TP=Temp; OL=Old/Incorrect; NI=No information; UN=Unknown; OT=Other	"Purpose of the address.
-Details of categorical definitions:
-Home: A communication address at home.
-Work: An office address.  First choice for business-related contacts during business hours.
-Temp: A temporary address.
-Old/Incorrect: This address is no longer in use (or was never correct but retained for records)."	323	
-LDS_ADDRESS_HISTORY	ADDRESS_TYPE	RDBMS Text(2)	SAS Char(2)		NO		PO;PH;BO;NI;UN;OT	PO=Postal; PH=Physical; BO=Both; NI=No information; UN=Unknown; OT=Other;	"Type of address.
-Details of categorical definitions:
-Postal: mailing address – PO Boxes and care-of addresses.
-Physical: A physical address that can be visited.
-Both: An address that is both physical and postal."	324	
+LDS_ADDRESS_HISTORY	ADDRESS_USE	RDBMS Text(2)	SAS Char(2)		NO		"HO;WO;TP;OL;NI;UN;OT"	HO=Home; WO=Work; TP=Temp; OL=Old/Incorrect; NI=No information; UN=Unknown; OT=Other	"Purpose of the address. Details of categorical definitions:Home: A communication address at home. Work: An office address.  First choice for business-related contacts during business hours. Temp: A temporary address. Old/Incorrect: This address is no longer in use (or was never correct but retained for records)."	323		
+LDS_ADDRESS_HISTORY	ADDRESS_TYPE	RDBMS Text(2)	SAS Char(2)		NO		PO;PH;BO;NI;UN;OT	PO=Postal; PH=Physical; BO=Both; NI=No information; UN=Unknown; OT=Other;	"Type of address. Details of categorical definitions: Postal: mailing address – PO Boxes and care-of addresses. Physical: A physical address that can be visited. Both: An address that is both physical and postal."	324		
 LDS_ADDRESS_HISTORY	ADDRESS_PREFERRED	RDBMS Text(2)	SAS Char(2)		NO		Y;N	Y=Yes; N=No	Indicates whether this address is the preferred one for a given patient, address use and address type within a given address period.	325	
 LDS_ADDRESS_HISTORY	ADDRESS_CITY	RDBMS Text(x)	SAS Char(x)		NO				The name of the city, town, village or other community.	326	
 LDS_ADDRESS_HISTORY	ADDRESS_STATE	RDBMS Text(2)	SAS Char(2)		NO		See Value Set Appendix for a list of acceptable values.		State, as represented by 2-digit postal abbreviation.	327	
@@ -433,11 +393,9 @@ IMMUNIZATION	RAW_VX_STATUS	RDBMS Text(x)	SAS Char(x)		NO				Field for originatin
 IMMUNIZATION	RAW_VX_STATUS_REASON	RDBMS Text(x)	SAS Char(x)		NO				Field for originating value, prior to mapping into the PCORnet CDM value set.	359	
 IMMUNIZATION	RAW_VX_MANUFACTURER	RDBMS Text(x)	SAS Char(x)		NO				Field for originating value, prior to mapping into the PCORnet CDM value set.	360	
 HARVEST	NETWORKID	RDBMS Text(10)	SAS Char(10)		NO				This identifier is assigned by the PCORnet Distributed Research Network Operations Center (DRN OC) 	361	
-HARVEST	NETWORK_NAME	RDBMS Text(20)	SAS Char(20)		NO				"Descriptive name of the network.
-This identifier is assigned by the PCORnet Distributed Research Network Operations Center (DRN OC) "	362	
+HARVEST	NETWORK_NAME	RDBMS Text(20)	SAS Char(20)		NO				"Descriptive name of the network. This identifier is assigned by the PCORnet Distributed Research Network Operations Center (DRN OC) "	362	
 HARVEST	DATAMARTID	RDBMS Text(10)	SAS Char(10)		NO				This identifier is assigned by the PCORnet Distributed Research Network Operations Center (DRN OC) 	363	
-HARVEST	DATAMART_NAME	RDBMS Text(20)	SAS Char(20)		NO				"Descriptive name of the datamart.
-This identifier is assigned by the PCORnet Distributed Research Network Operations Center (DRN OC) "	364	
+HARVEST	DATAMART_NAME	RDBMS Text(20)	SAS Char(20)		NO				"Descriptive name of the datamart. This identifier is assigned by the PCORnet Distributed Research Network Operations Center (DRN OC) "	364	
 HARVEST	DATAMART_PLATFORM	RDBMS Text(2)	SAS Char(2)		NO		01;02;03;04;05;NI;UN;OT	01=SQL Server; 02=Oracle; 03=PostgreSQL; 04=MySQL; 05=SAS; NI=No information; UN=Unknown; OT=Other		365	
 HARVEST	CDM_VERSION	RDBMS Number(x)	SAS Numeric(length 8)	RDBMS number supports 15 total digits, 8 after decimal; SAS numeric length 8	NO				Version currently implemented within this datamart (for example, 1.0, 2.0, 3.0). Number precision and scale updated in v3.1.	366	
 HARVEST	DATAMART_CLAIMS	RDBMS Text(2)	SAS Char(2)		NO		01;02;NI;UN;OT	01=Not present; 02=Present; NI=No information; UN=Unknown; OT=Other	Datamart includes claims data source(s)	367	
@@ -492,3 +450,4 @@ HARVEST	REFRESH_OBS_GEN_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			Most recen
 HARVEST	REFRESH_HASH_TOKEN_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			Most recent date on which the present data were loaded into the HASH_TOKEN table. This date should be null if the table does not have records.	416	
 HARVEST	REFRESH_LDS_ADDRESS_HISTORY_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			Most recent date on which the present data were loaded into the LDS_ADDRESS_HISTORY table. This date should be null if the table does not have records.	417	
 HARVEST	REFRESH_IMMUNIZATION_DATE	RDBMS Date	SAS Date (Numeric)		NO	DATE			Most recent date on which the present data were loaded into the IMMUNIZATION table. This date should be null if the table does not have records.	418	
+	

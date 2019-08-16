@@ -98,6 +98,38 @@ public class CommonDataModelReader {
 		if (!line.equals("@FIELD"))
 			throw new ParseException("Field section must begin with @FIELD", 3);
 		
+		/* read header row */
+		line = r.readLine();
+		String[] flds = line.split(Pattern.quote("\t"));
+		int iName = -1, iDesc = -1, iOrder = -1, iTable = -1;
+		for (int i=0; i<flds.length; i++) {
+			String fld = flds[i].toLowerCase();
+			if (fld.contains("field") && fld.contains("name")) {
+				iName = i;
+			} else if (fld.contains("descr") || fld.contains("defin")) {
+				iDesc = i;
+			} else if (fld.contains("order") || fld.contains("seq")) {
+				iOrder = i;
+			} else if (fld.contains("table") && fld.contains("name")) {
+				iTable = i;
+			}
+		}
+		System.out.println(iName);
+		
+		while(!(line=r.readLine()).trim().equals("")) {
+			System.out.println("line " + r.getLineNumber() + ": " + line);
+			flds = line.split(Pattern.quote("\t"), -1);
+		
+			int fldOrder = Integer.parseInt(flds[iOrder]);
+			System.out.println(flds[iTable]);
+			CommonDataModelTable t = cdm.getTableByName(flds[iTable]);
+			System.out.println(t);
+			CommonDataModelField f = new CommonDataModelField(t, flds[iName], 
+					flds[iDesc], fldOrder, fldOrder);
+			t.addField(f);
+		}
+		
+		
 	}
 	
 }

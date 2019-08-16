@@ -2,6 +2,7 @@ package edu.ufl.bmi.util.cdm;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class CommonDataModel {
@@ -23,6 +24,8 @@ public class CommonDataModel {
 	String creator;
 	Calendar versionReleaseDate;
 	
+	HashMap<String, CommonDataModelTable> _tableNameToTable;
+	
 	ArrayList<CommonDataModelTable> tableList;
 	
 	public CommonDataModel(String name) {
@@ -33,6 +36,7 @@ public class CommonDataModel {
 		this.cdmDescription = "";
 		this.versionReleaseDate = null;
 		this.tableList = new ArrayList<CommonDataModelTable>();
+		this._tableNameToTable = new HashMap<String, CommonDataModelTable>(); 
 	}
 	
 	public CommonDataModel(String name, String version, String creator, String description, String versionDateMmDdYyyy) {
@@ -43,6 +47,7 @@ public class CommonDataModel {
 		this.versionReleaseDate = parseDateMmDdYyyy(versionDateMmDdYyyy);
 		this.cdmDescription = description.trim();
 		this.tableList = new ArrayList<CommonDataModelTable>();
+		this._tableNameToTable = new HashMap<String, CommonDataModelTable>();
 	}
 	
 	protected Calendar parseDateMmDdYyyy(String versionDateMmDdYyyy) {
@@ -61,6 +66,8 @@ public class CommonDataModel {
 	public void addTable(CommonDataModelTable table) {
 		if (table.getCdm() == null) table.setCommonDataModel(this);
 		tableList.add(table);
+		System.out.println("Adding table " + table.getName());
+		_tableNameToTable.put(table.getName(), table);
 	}
 	
 	public String getCdmName() {
@@ -81,5 +88,9 @@ public class CommonDataModel {
 	
 	public Calendar getVersionReleaseDate() {
 		return versionReleaseDate;
+	}
+
+	public CommonDataModelTable getTableByName(String cdmTableName) {
+		return _tableNameToTable.get(cdmTableName.trim());
 	}
 }
