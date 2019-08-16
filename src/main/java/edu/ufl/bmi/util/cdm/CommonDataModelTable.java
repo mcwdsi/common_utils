@@ -3,8 +3,12 @@ package edu.ufl.bmi.util.cdm;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
+import java.lang.Comparable;
+import java.util.TreeSet;
 
-public class CommonDataModelTable implements Iterable<CommonDataModelField> {
+public class CommonDataModelTable implements Iterable<CommonDataModelField>, 
+	Comparable<CommonDataModelTable> {
+
 	String tableName;
 	String tableNameLower;
 	String tableDescription;
@@ -12,6 +16,7 @@ public class CommonDataModelTable implements Iterable<CommonDataModelField> {
 	CommonDataModel cdm;
 	
 	ArrayList<CommonDataModelField> fieldList;
+	TreeSet<CommonDataModelField> fieldSet;
 	
 	public CommonDataModelTable(CommonDataModel cdm, String tableName) {
 		this.tableName = tableName;
@@ -19,6 +24,7 @@ public class CommonDataModelTable implements Iterable<CommonDataModelField> {
 		this.tableDescription = "";
 		this.tableOrderInCdm = -1;
 		fieldList = new ArrayList<CommonDataModelField>();
+		this.fieldSet = new TreeSet<CommonDataModelField>();
 		this.cdm = cdm;
 	}
 	
@@ -30,6 +36,8 @@ public class CommonDataModelTable implements Iterable<CommonDataModelField> {
 		if (field.getFieldOrderInTable() < 0) {
 			field.setFieldOrderInTable((fieldList.size() + 1));
 		}
+		fieldList.add(field);
+		fieldSet.add(field);
 	}
 	
 	public String getName() {
@@ -46,6 +54,10 @@ public class CommonDataModelTable implements Iterable<CommonDataModelField> {
 
 	public Iterator<CommonDataModelField> iterator() {
 		return fieldList.iterator();
+	}
+
+	public Iterator<CommonDataModelField> getAllFieldsInOrder() {
+		return fieldSet.iterator();
 	}
 	
 	public CommonDataModel getCdm() {
@@ -73,5 +85,18 @@ public class CommonDataModelTable implements Iterable<CommonDataModelField> {
 
 	public void setDescription(String description) {
 		this.tableDescription = description;
+	}
+
+	@Override
+	public int compareTo(CommonDataModelTable o) {
+		int thisOrder = this.getTableOrderInCdm();
+		int thatOrder = o.getTableOrderInCdm();
+		if (thisOrder < thatOrder) {
+			return -1;
+		} else if (thisOrder > thatOrder) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 }

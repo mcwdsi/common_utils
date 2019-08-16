@@ -2,7 +2,7 @@ package edu.ufl.bmi.util.cdm;
 
 import java.util.Objects;
 
-public class CommonDataModelField {
+public class CommonDataModelField implements Comparable<CommonDataModelField> {
 	String fieldName;
 	String fieldNameLower;
 	String fieldDescription;
@@ -64,5 +64,18 @@ public class CommonDataModelField {
 	@Override
 	public int hashCode() {
 		return Objects.hash(table.getCdm(), table, fieldNameLower);
+	}
+
+	@Override
+	public int compareTo(CommonDataModelField f) {
+		int thatOrder = f.getFieldOrderInTable();
+		int thisOrder = getFieldOrderInTable();
+		if (thisOrder < thatOrder) {
+			return -1;
+		} else if (thisOrder > thatOrder) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 }

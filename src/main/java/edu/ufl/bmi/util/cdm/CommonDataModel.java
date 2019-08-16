@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.regex.Pattern;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 public class CommonDataModel {
 	/*
@@ -25,8 +27,11 @@ public class CommonDataModel {
 	Calendar versionReleaseDate;
 	
 	HashMap<String, CommonDataModelTable> _tableNameToTable;
+	HashMap<Integer, CommonDataModelTable> tableOrderToTable;
+	HashMap<String, Integer> tableNameToTableOrder;
 	
 	ArrayList<CommonDataModelTable> tableList;
+	TreeSet<CommonDataModelTable> tableSet;
 	
 	public CommonDataModel(String name) {
 		this.cdmName = name;
@@ -36,7 +41,10 @@ public class CommonDataModel {
 		this.cdmDescription = "";
 		this.versionReleaseDate = null;
 		this.tableList = new ArrayList<CommonDataModelTable>();
-		this._tableNameToTable = new HashMap<String, CommonDataModelTable>(); 
+		this.tableSet = new TreeSet<CommonDataModelTable>();
+		this._tableNameToTable = new HashMap<String, CommonDataModelTable>();
+		this.tableOrderToTable = new HashMap<Integer, CommonDataModelTable>();
+		this.tableNameToTableOrder = new HashMap<String, Integer>();
 	}
 	
 	public CommonDataModel(String name, String version, String creator, String description, String versionDateMmDdYyyy) {
@@ -47,7 +55,10 @@ public class CommonDataModel {
 		this.versionReleaseDate = parseDateMmDdYyyy(versionDateMmDdYyyy);
 		this.cdmDescription = description.trim();
 		this.tableList = new ArrayList<CommonDataModelTable>();
+		this.tableSet = new TreeSet<CommonDataModelTable>();
 		this._tableNameToTable = new HashMap<String, CommonDataModelTable>();
+		this.tableOrderToTable = new HashMap<Integer, CommonDataModelTable>();
+		this.tableNameToTableOrder = new HashMap<String, Integer>();
 	}
 	
 	protected Calendar parseDateMmDdYyyy(String versionDateMmDdYyyy) {
@@ -66,8 +77,11 @@ public class CommonDataModel {
 	public void addTable(CommonDataModelTable table) {
 		if (table.getCdm() == null) table.setCommonDataModel(this);
 		tableList.add(table);
+		tableSet.add(table);
 		System.out.println("Adding table " + table.getName());
 		_tableNameToTable.put(table.getName(), table);
+		tableOrderToTable.put(table.getTableOrderInCdm(), table);
+		tableNameToTableOrder.put(table.getName(), table.getTableOrderInCdm());
 	}
 	
 	public String getCdmName() {
@@ -92,5 +106,18 @@ public class CommonDataModel {
 
 	public CommonDataModelTable getTableByName(String cdmTableName) {
 		return _tableNameToTable.get(cdmTableName.trim());
+	}
+
+	public int getTableOrderByName(String cdmTableName) {
+		Integer i = tableNameToTableOrder.get(cdmTableName);
+		return i.intValue();
+	}
+
+	public Iterator<CommonDataModelTable> getAllTables() {
+		return tableList.iterator();
+	}
+
+	public Iterator<CommonDataModelTable> getAllTablesInOrder() {
+		return tableSet.iterator();
 	}
 }

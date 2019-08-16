@@ -3,6 +3,7 @@ package edu.ufl.bmi.util.cdm;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Iterator;
 
 public class CdmReaderTest {
 
@@ -17,6 +18,12 @@ public class CdmReaderTest {
 			System.out.println("Release date of CDM: " + cdm.getVersionReleaseDate().toString());
 			System.out.println("Creator of CDM: " + cdm.getCreator());
 			System.out.println("Description: " + cdm.getCdmDescription());
+
+			Iterator<CommonDataModelTable> i = cdm.getAllTablesInOrder();
+			while (i.hasNext()) {
+				CommonDataModelTable t = i.next();
+				System.out.println(t.getName() + "\t" + t.getTableOrderInCdm());
+			}
 		} catch (IOException ioe) {
 			System.err.println("IO exception!");
 			ioe.printStackTrace();
