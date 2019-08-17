@@ -1,6 +1,7 @@
 package edu.ufl.bmi.util.cdm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 import java.lang.Comparable;
@@ -17,6 +18,7 @@ public class CommonDataModelTable implements Iterable<CommonDataModelField>,
 	
 	ArrayList<CommonDataModelField> fieldList;
 	TreeSet<CommonDataModelField> fieldSet;
+	HashMap<String, CommonDataModelField> fieldNameToField;
 	
 	public CommonDataModelTable(CommonDataModel cdm, String tableName) {
 		this.tableName = tableName;
@@ -26,6 +28,7 @@ public class CommonDataModelTable implements Iterable<CommonDataModelField>,
 		fieldList = new ArrayList<CommonDataModelField>();
 		this.fieldSet = new TreeSet<CommonDataModelField>();
 		this.cdm = cdm;
+		this.fieldNameToField = new HashMap<String, CommonDataModelField>();
 	}
 	
 	public void setTableOrderInCdm(int sequenceNumber) {
@@ -38,6 +41,7 @@ public class CommonDataModelTable implements Iterable<CommonDataModelField>,
 		}
 		fieldList.add(field);
 		fieldSet.add(field);
+		fieldNameToField.put(field.getFieldName(), field);
 	}
 	
 	public String getName() {
@@ -98,5 +102,9 @@ public class CommonDataModelTable implements Iterable<CommonDataModelField>,
 		} else {
 			return 0;
 		}
+	}
+
+	public CommonDataModelField getFieldByName(String fieldName) {
+		return fieldNameToField.get(fieldName);
 	}
 }
