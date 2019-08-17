@@ -33,10 +33,7 @@ public class CommonDataModelField implements Comparable<CommonDataModelField> {
 	}
 
 	public void setFieldOrderInTable(int i) {
-		if (fieldOrderInTable < 0) {
 			this.fieldOrderInTable = i;
-		} 
-		//else some exception perhaps?
 	}
 	
 	public String getFieldName() {
@@ -77,5 +74,9 @@ public class CommonDataModelField implements Comparable<CommonDataModelField> {
 		} else {
 			return 0;
 		}
+	}
+
+	public void setFieldOrderInCdm(int i) {
+		this.fieldOrderInCdm = i;
 	}
 }

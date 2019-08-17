@@ -6,9 +6,6 @@ import java.io.Reader;
 import java.text.ParseException;
 import java.util.regex.Pattern;
 
-import edu.ufl.bmi.util.LabelSequenceMap;
-
-
 
 public class CommonDataModelReader {
 
@@ -23,6 +20,7 @@ public class CommonDataModelReader {
 		readCdmInfo();
 		readTableInfo();
 		readFieldInfo();
+		cdm.normalizeFieldOrders();
 		return cdm;
 	}
 
@@ -117,13 +115,13 @@ public class CommonDataModelReader {
 		System.out.println(iName);
 		
 		while(!(line=r.readLine()).trim().equals("")) {
-			System.out.println("line " + r.getLineNumber() + ": " + line);
+			//System.out.println("line " + r.getLineNumber() + ": " + line);
 			flds = line.split(Pattern.quote("\t"), -1);
 		
 			int fldOrder = Integer.parseInt(flds[iOrder]);
-			System.out.println(flds[iTable]);
+			//System.out.println(flds[iTable]);
 			CommonDataModelTable t = cdm.getTableByName(flds[iTable]);
-			System.out.println(t);
+			//System.out.println(t);
 			CommonDataModelField f = new CommonDataModelField(t, flds[iName], 
 					flds[iDesc], fldOrder, fldOrder);
 			t.addField(f);

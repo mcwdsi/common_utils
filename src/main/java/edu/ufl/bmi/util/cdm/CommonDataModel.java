@@ -78,7 +78,7 @@ public class CommonDataModel {
 		if (table.getCdm() == null) table.setCommonDataModel(this);
 		tableList.add(table);
 		tableSet.add(table);
-		System.out.println("Adding table " + table.getName());
+		//System.out.println("Adding table " + table.getName());
 		_tableNameToTable.put(table.getName(), table);
 		tableOrderToTable.put(table.getTableOrderInCdm(), table);
 		tableNameToTableOrder.put(table.getName(), table.getTableOrderInCdm());
@@ -119,5 +119,71 @@ public class CommonDataModel {
 
 	public Iterator<CommonDataModelTable> getAllTablesInOrder() {
 		return tableSet.iterator();
+	}
+
+	public void normalizeFieldOrders() {
+		/*
+		 * For each table, iterate through its fields. If the fields are not numbered consecutively
+		 * 	1 through n, where n is the total number of fields in the table, then make them
+		 *  1 through n consecutive.  If there is a global CDM field order, we'll base the 
+		 *  table-specific ordering on it.  If there is no ordering of fields at all, then
+		 *  what a lousy CDM.  But we'll just insist on one.  In fact, already in the reading
+		 *  in of the CDM, our code will have crashed without any ordering info.
+		 *  
+		 *  Similarly, if there's no global CDM field ordering, we'll use table-based ordering, 
+		 *  	in combination with the ordering of tables, to impose one.  Same caveats apply.
+		 */
+		Iterator<CommonDataModelTable> i = tableSet.iterator();
+		int cdmFieldCounter = 1, lastTableHighestCdmOrder = -1;
+		while (i.hasNext()) {
+			/*
+			 * If we are on table #1 in the order, then global and table-specific field ordering
+			 * 	are identical.  If they're not identical, then fix it.
+			 */
+			CommonDataModelTable t = i.next();
+			Iterator<CommonDataModelField> j = t.getAllFieldsInOrder();
+			int tableOrder = t.getTableOrderInCdm();
+			// Specific to first table
+			if (tableOrder == 1) {
+				int fieldCounter = 1;
+				while (j.hasNext()) {
+					CommonDataModelField f = j.next();
+					int fieldOrderInTable = f.getFieldOrderInTable();
+					int fieldOrderInCdm = f.getFieldOrderInCdm();
+					
+					if (fieldOrderInTable != fieldOrderInCdm) {
+						if (fieldOrderInTable < 0 && fieldOrderInCdm > 0)
+							fieldOrderInTable = fieldOrderInCdm;
+						else if (fieldOrderInCdm < 0 && fieldOrderInTable > 0)
+							fieldOrderInCdm = fieldOrderInTable;
+						else  
+							fieldOrderInCdm = (fieldOrderInTable = fieldCounter);
+					}
+					fieldCounter++;
+					cdmFieldCounter++;
+				}
+				lastTableHighestCdmOrder = cdmFieldCounter-1; 
+			} else {
+				//generic to remaining tables
+				int fieldCounter = 1;
+				while (j.hasNext()) {
+					CommonDataModelField f = j.next();
+					int fieldOrderInTable = f.getFieldOrderInTable();
+					int fieldOrderInCdm = f.getFieldOrderInCdm();
+					if (fieldOrderInTable == fieldOrderInCdm && fieldOrderInCdm > lastTableHighestCdmOrder) {
+						int k = fieldOrderInTable - lastTableHighestCdmOrder;
+						f.setFieldOrderInTable(k);
+					} else if (fieldOrderInTable < 0) {
+						f.setFieldOrderInTable(fieldCounter);
+					} else if (fieldOrderInCdm < lastTableHighestCdmOrder) {
+						f.setFieldOrderInCdm(lastTableHighestCdmOrder + fieldCounter);
+					}
+					fieldCounter++;
+					cdmFieldCounter++;
+				}
+				lastTableHighestCdmOrder = cdmFieldCounter-1;
+			}
+			
+		}
 	}
 }

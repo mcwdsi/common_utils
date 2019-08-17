@@ -23,6 +23,12 @@ public class CdmReaderTest {
 			while (i.hasNext()) {
 				CommonDataModelTable t = i.next();
 				System.out.println(t.getName() + "\t" + t.getTableOrderInCdm());
+				Iterator<CommonDataModelField> j = t.getAllFieldsInOrder();
+				while (j.hasNext()) {
+					CommonDataModelField f = j.next();
+					System.out.println("\t" + f.getFieldName() + "\t" + f.getFieldOrderInTable() + "\t" +
+											f.getFieldOrderInCdm());
+				}
 			}
 		} catch (IOException ioe) {
 			System.err.println("IO exception!");
