@@ -114,8 +114,10 @@ public class CommonDataModelReader {
 		}
 		System.out.println(iName);
 		
+		//System.out.println("reading fields.");
 		while(!(line=r.readLine()).trim().equals("")) {
 			//System.out.println("line " + r.getLineNumber() + ": " + line);
+			//System.out.println("reading next field.");
 			flds = line.split(Pattern.quote("\t"), -1);
 		
 			int fldOrder = Integer.parseInt(flds[iOrder]);
